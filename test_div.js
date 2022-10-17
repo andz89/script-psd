@@ -23,6 +23,8 @@
 
     w = new Window("dialog", title);
     w.alignChildren = "fill";
+
+
     // p = w.add("panel", undefined, "Input");
     // g = p.add("group");
     // btnFolderInput = g.add("button", undefined, "Folder...");
@@ -37,19 +39,23 @@
         truncate: "middle"
     });
     txtFolderOutput.preferredSize = [200, -1];
+
+    p = w.add("panel", undefined,"Image Name");
+    g = p.add("group");
+    //  g.add('panel', undefined, "Panel title");
+    txtInput = g.add("edittext", undefined, "hello",);
+    g.alignment = "left";
+    txtInput.preferredSize = [200, -1];
+   
     g = w.add("group");
     g.alignment = "center";
     btnOk = g.add("button", undefined, "OK");
     btnCancel = g.add("button", undefined, "Cancel");
 
+
     // UI EVENT HANDLERS
 
-    // btnFolderInput.onClick = function () {
-    //     var f = Folder.selectDialog();
-    //     if (f) {
-    //         txtFolderInput.text = f.fullName;
-    //     }
-    // };
+
 
     btnFolderOutput.onClick = function () {
         var f = Folder.selectDialog();
@@ -57,7 +63,7 @@
             txtFolderOutput.text = f.fullName;
         }
     };
-
+  
     btnOk.onClick = function () {
         // if (!txtFolderInput.text) {
         //     alert("Select input folder", " ", false);
@@ -74,17 +80,20 @@
         w.close(0);
     };
 
+
     // SHOW THE WINDOW
 
     if (w.show() == 1) {
         try {
+       
             process();
+           
             alert(abort || "Done", title, false);
         } catch (e) {
             alert("An error has occurred.\nLine " + e.line + ": " + e.message, title, true);
         }
     }
-   
+
     function process() {
      
         progress("Reading folder...");
@@ -190,7 +199,7 @@ app.preferences.rulerUnits = defaultRulerUnits;
 var layer = activeDocument.activeLayer; //Grab the currently selected layer
 
 var layers = doc.layers.length
-
+var progress_count = 1
 var count = 1;
 while (layers > 1) {
 
@@ -212,7 +221,7 @@ var d = new Date()
 var file_name = d.getTime()+ '-' + d.getMinutes()+ '-'+ d.getSeconds()+ '-'+ d.getHours()+'-'+ d.getDate() + '-' + d.getMonth() + '- ' + d.getFullYear()
 layer.copy()
 
-app.documents.add(UnitValue(height, 'PX'), UnitValue(width, 'PX'), 100, file_name + '-', NewDocumentMode.RGB);
+app.documents.add(UnitValue(height, 'PX'), UnitValue(width, 'PX'), 100, file_name  + '-', NewDocumentMode.RGB);
 var doc = app.activeDocument
 
 
@@ -221,10 +230,10 @@ doc.paste()
 saveJpg(doc);
 function saveJpg(doc) {
   
-    var fileName = 'High Street'
+    var fileName = txtInput.text
   var  fileJpg = new File(txtFolderOutput.text + "/" +  fileName+ '-' + count++ + ".jpg");
 
-    progress.message(File.decode(fileName) +' '  + 'width:' + doc.width + 'height:'+ doc.height);
+    progress.message(File.decode(fileName)+ ' - ' + progress_count++ +' '  + 'width:' + doc.width+ ' ' + 'height:'+ doc.height);
     // throw error;
     // Do something with image here
     saveOptions = new JPEGSaveOptions();
