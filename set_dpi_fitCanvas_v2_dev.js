@@ -97,12 +97,18 @@
        
             progress("Reading folder...");
              // Get files in folder.
-             files = new Folder(txtFolderInput.text).getFiles(function (f) {
+             files = new Folder(txtFolderInput.text).getFiles(/\.(jpg|jpeg|png|)$/i,function (f) {
                 if (f.hidden || f instanceof Folder) {
-                return false;
+
+                 return false;
+                }else{
+                    return true
                 }
-                return true;
+               
+              
                 });
+                
+              
             // progress.set(files.length);
             try {
                 items = files.length
@@ -110,6 +116,7 @@
                 files_count = files.length
                 // alert(files[0])
                 while(files_count > 0){
+                 
               
                     fit_image(files[file])
                     files_count--
@@ -250,9 +257,6 @@ app.displayDialogs = DialogModes.NO;
 var layer = doc.activeLayer; //Grab the currently selected layer
 
 
-
-
-
 var layer = activeDocument.activeLayer; //Grab the currently selected layer
 // Calculate height and width based on the rectangular bounds of the selected layer
 var height = layer.bounds[2]-layer.bounds[0]; //Grab the height
@@ -263,21 +267,20 @@ height = height.toString().replace(' px', '');
 width = width.toString().replace(' px', '');
 
 
-var d = new Date()
-var file_name = d.getTime()+ '-' + d.getMinutes()+ '-'+ d.getSeconds()+ '-'+ d.getHours()+'-'+ d.getDate() + '-' + d.getMonth() + '- ' + d.getFullYear()
+
 layer.copy()
 
-app.documents.add(UnitValue(height, 'PX'), UnitValue(width, 'PX'), doc.resolution, file_name  + '-', NewDocumentMode.RGB);
+app.documents.add(UnitValue(height, 'PX'), UnitValue(width, 'PX'), doc.resolution, layer.name, NewDocumentMode.RGB);
 var doc = app.activeDocument
 
 
 doc.paste()
-
+ 
 saveJpg(doc);
 function saveJpg(doc) {
-  
-    var fileName = txtInput.text || 'untitled'
-  var  fileJpg = new File(txtFolderOutput.text + "/" +  fileName+ '-' + count++ + ".jpg");
+    var layer_active_name = doc.name
+    var fileName = txtInput.text || layer_active_name
+    var  fileJpg = new File(txtFolderOutput.text + "/" +  fileName  +  '-' + count++ + ".jpg");
 
     progress.message(File.decode(fileName)+ ' - ' + progress_count++ + ': ' +' '  + 'width:' + doc.width+ ' ' + 'height:'+ doc.height);
  
