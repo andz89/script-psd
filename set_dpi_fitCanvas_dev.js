@@ -2,8 +2,8 @@
 
     // Script variables
     var abort;
-    var title = "Adobe Script Tutorial 5";
-
+    var title = "Gwill Script";
+    var feedback;
     // Reusable UI variables
     var g; // group
     var p; // panel
@@ -43,7 +43,7 @@
     p = w.add("panel", undefined,"Image Name");
     g = p.add("group");
     //  g.add('panel', undefined, "Panel title");
-    txtInput = g.add("edittext", undefined, "hello",);
+    txtInput = g.add("edittext", undefined, "",);
     g.alignment = "left";
     txtInput.preferredSize = [200, -1];
    
@@ -86,27 +86,24 @@
     if (w.show() == 1) {
         try {
        
-            process();
-           
-            alert(abort || "Done", title, false);
+            progress("Reading folder...");
+            doc = app.activeDocument
+            var layers = doc.layers.length
+            progress.set(layers.length);
+            try {
+            // Loop through files array.
+            fit_image()
+            } finally {
+            progress.close();
+            }
+
+            alert(abort || feedback, title, false);
         } catch (e) {
             alert("An error has occurred.\nLine " + e.line + ": " + e.message, title, true);
         }
     }
 
-    function process() {
-     
-        progress("Reading folder...");
-        doc = app.activeDocument
-        var layers = doc.layers.length
-        progress.set(layers.length);
-        try {
-            // Loop through files array.
-            fit_image()
-        } finally {
-            progress.close();
-        }
-    }
+
 
 
     function progress(message) {
@@ -140,6 +137,7 @@
     }
     function fit_image(){
         doc = app.activeDocument
+var items = doc.layers.length - 1
 var layers = doc.layers.length
 var count = doc.layers.length - 2
 
@@ -190,12 +188,19 @@ app.preferences.rulerUnits = defaultRulerUnits;
     layers--;
  
   }
+
   set_size()
+  feedback = 'Successful! Processed  ' + items + " items"
     }
 
-    function set_size(){
-        var doc = app.activeDocument
-        app.displayDialogs = DialogModes.NO;
+
+
+
+
+function set_size(){
+
+var doc = app.activeDocument
+app.displayDialogs = DialogModes.NO;
 var layer = activeDocument.activeLayer; //Grab the currently selected layer
 
 var layers = doc.layers.length
@@ -212,16 +217,12 @@ var width = layer.bounds[3]-layer.bounds[1]; //Grab the width
 height = height.toString().replace(' px', '');
 width = width.toString().replace(' px', '');
 
-// var response = confirm( 'height: ' +' ' + height + '  -------  ' + 'width: ' +' ' + width + ' ' )
 
-// if(response == false){
-// break;
-// }
 var d = new Date()
 var file_name = d.getTime()+ '-' + d.getMinutes()+ '-'+ d.getSeconds()+ '-'+ d.getHours()+'-'+ d.getDate() + '-' + d.getMonth() + '- ' + d.getFullYear()
 layer.copy()
 
-app.documents.add(UnitValue(height, 'PX'), UnitValue(width, 'PX'), 100, file_name  + '-', NewDocumentMode.RGB);
+app.documents.add(UnitValue(height, 'PX'), UnitValue(width, 'PX'), doc.resolution, file_name  + '-', NewDocumentMode.RGB);
 var doc = app.activeDocument
 
 
@@ -230,11 +231,11 @@ doc.paste()
 saveJpg(doc);
 function saveJpg(doc) {
   
-    var fileName = txtInput.text
+    var fileName = txtInput.text || 'untitled'
   var  fileJpg = new File(txtFolderOutput.text + "/" +  fileName+ '-' + count++ + ".jpg");
 
-    progress.message(File.decode(fileName)+ ' - ' + progress_count++ +' '  + 'width:' + doc.width+ ' ' + 'height:'+ doc.height);
-    // throw error;
+    progress.message(File.decode(fileName)+ ' - ' + progress_count++ + ': ' +' '  + 'width:' + doc.width+ ' ' + 'height:'+ doc.height);
+ 
     // Do something with image here
     saveOptions = new JPEGSaveOptions();
     saveOptions.embedColorProfile = true;
